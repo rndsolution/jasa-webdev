@@ -1,8 +1,8 @@
 backend:
   name: github
-  repo: dongengkids-wq/jasa-webdev
+  repo: rndsolution/jasa-webdev
   branch: main
-  base_url: https://rndsolution-oauth.onrender.com
+  base_url: https://jasa-webdev-r0se.onrender.com
 
 publish_mode: editorial_workflow
 
