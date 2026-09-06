@@ -44,5 +44,10 @@
      <loc>https://rndsolution.id/artikel.html?slug=website-vs-aplikasi-mana-yang-lebih-cocok-untuk-bisnis-kamu</loc>
      <changefreq>monthly</changefreq>
      <priority>0.6</priority>
-   </url>
+  </url>
+     <url>
+    <loc>https://rndsolution.id/artikel.html?slug=cara-memilih-jasa-pembuatan-website-terpercaya</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
 </urlset>
