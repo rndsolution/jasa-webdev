@@ -2,7 +2,7 @@ backend:
   name: github
   repo: rndsolution/jasa-webdev
   branch: main
-  base_url: https://rndsolution-oauth-wcs6.onrender.com
+  base_url: https://sveltia-cms-auth.rndsolution25.workers.dev/
   auth_endpoint: auth
 
 publish_mode: editorial_workflow
