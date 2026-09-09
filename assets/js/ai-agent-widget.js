@@ -222,9 +222,11 @@
       `<p>Halo. Saya asisten RND Solution — bantu cari solusi digital yang pas buat usaha kamu.</p>` +
       `<p>Ceritakan kebutuhanmu, atau pilih salah satu di bawah ini:</p>` +
       `<div class="rnd-chips">
-         <button class="rnd-chip" data-q="Saya butuh website company profile">Website profil</button>
-         <button class="rnd-chip" data-q="Saya butuh aplikasi kasir">Aplikasi kasir</button>
-         <button class="rnd-chip" data-q="Berapa estimasi biaya dan waktu pengerjaannya?">Biaya &amp; waktu</button>
+         <button class="rnd-chip" data-q="Saya butuh website bisnis atau landing page">Website &amp; Landing Page</button>
+         <button class="rnd-chip" data-q="Saya butuh aplikasi Android untuk operasional usaha, seperti kasir atau pembukuan">Aplikasi Android</button>
+         <button class="rnd-chip" data-q="Saya butuh sistem atau aplikasi custom sesuai alur kerja bisnis saya">Sistem Custom</button>
+         <button class="rnd-chip" data-q="Saya butuh bantuan deployment dan setup custom domain">Deploy &amp; Domain</button>
+         <button class="rnd-chip" data-q="Berapa estimasi biaya dan lama pengerjaannya?">Biaya &amp; Estimasi</button>
        </div>`;
     bub.querySelectorAll('.rnd-chip').forEach((chip) => {
       chip.addEventListener('click', () => {
