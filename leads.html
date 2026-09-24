@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Dashboard Lead — RND Solution</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0B0F19;
+      --surface: #131826;
+      --text: #F5F5F7;
+      --muted: #9CA3AF;
+      --accent: #6EE7B7;
+      --line: rgba(255,255,255,.10);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+      min-height: 100vh; font-size: 14px; line-height: 1.6;
+    }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    .display { font-family: 'Sora', sans-serif; }
+
+    /* ---------- Login ---------- */
+    #login {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px;
+    }
+    .login-card {
+      width: 100%; max-width: 380px; background: var(--surface);
+      border: 1px solid var(--line); border-radius: 16px; padding: 32px;
+    }
+    .login-tag {
+      font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent);
+      letter-spacing: .05em; margin-bottom: 10px;
+    }
+    .login-card h1 { font-family: 'Sora', sans-serif; font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+    .login-card p { color: var(--muted); font-size: 13px; margin-bottom: 22px; }
+
+    input[type="password"], input[type="text"], select {
+      width: 100%; padding: 11px 14px; font-size: 14px; color: var(--text);
+      background: var(--bg); border: 1px solid var(--line); border-radius: 10px; outline: none;
+      font-family: inherit; transition: border-color .15s, box-shadow .15s;
+    }
+    input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(110,231,183,.15); }
+    input::placeholder { color: var(--muted); }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 11px 18px; border: none; border-radius: 10px; cursor: pointer;
+      background: var(--accent); color: var(--bg); font-weight: 600; font-size: 14px;
+      font-family: inherit; transition: transform .15s, opacity .15s;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+    .btn-block { width: 100%; margin-top: 14px; }
+    .btn-ghost {
+      background: transparent; color: var(--muted); border: 1px solid var(--line);
+      padding: 8px 14px; font-weight: 500; font-size: 13px;
+    }
+    .btn-ghost:hover { color: var(--text); border-color: var(--accent); }
+
+    .error { color: #FCA5A5; font-size: 13px; margin-top: 12px; display: none; }
+
+    /* ---------- Dashboard ---------- */
+    #dash { display: none; }
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+      padding: 18px 24px; border-bottom: 1px solid var(--line); background: var(--surface);
+      position: sticky; top: 0; z-index: 10;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand-mark {
+      width: 34px; height: 34px; border-radius: 9px; background: rgba(110,231,183,.12);
+      border: 1px solid rgba(110,231,183,.4); display: flex; align-items: center; justify-content: center;
+      color: var(--accent);
+    }
+    .brand h1 { font-family: 'Sora', sans-serif; font-size: 16px; font-weight: 600; }
+    .brand .sub { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--muted); letter-spacing: .04em; }
+
+    .wrap { padding: 24px; max-width: 1240px; margin: 0 auto; }
+
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 22px; }
+    .stat {
+      background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px;
+    }
+    .stat .label {
+      font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--muted);
+      text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px;
+    }
+    .stat .value { font-family: 'Sora', sans-serif; font-size: 26px; font-weight: 700; line-height: 1.1; }
+    .stat.is-accent .value { color: var(--accent); }
+
+    .toolbar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+    .toolbar input, .toolbar select { width: auto; flex: 1; min-width: 180px; }
+
+    .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 14px; }
+    .card {
+      background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+      padding: 18px; display: flex; flex-direction: column; gap: 12px;
+      transition: border-color .15s;
+    }
+    .card:hover { border-color: rgba(110,231,183,.35); }
+    .card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .card-name { font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 600; }
+    .card-name .anon { color: var(--muted); font-weight: 400; font-style: italic; }
+    .card-contact {
+      font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent);
+      margin-top: 3px; word-break: break-all;
+    }
+    .card-contact a { color: inherit; text-decoration: none; border-bottom: 1px dotted rgba(110,231,183,.5); }
+
+    .badge {
+      font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 4px 9px; border-radius: 999px;
+      text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; border: 1px solid;
+    }
+    .badge.baru { color: var(--accent); background: rgba(110,231,183,.10); border-color: rgba(110,231,183,.4); }
+    .badge.diproses { color: #FCD34D; background: rgba(252,211,77,.10); border-color: rgba(252,211,77,.4); }
+    .badge.deal { color: #93C5FD; background: rgba(147,197,253,.10); border-color: rgba(147,197,253,.4); }
+    .badge.batal { color: #9CA3AF; background: rgba(156,163,175,.10); border-color: rgba(156,163,175,.35); }
+
+    .meta { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip {
+      font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--muted);
+      background: rgba(255,255,255,.04); border: 1px solid var(--line);
+      padding: 4px 9px; border-radius: 6px;
+    }
+    .chip b { color: var(--text); font-weight: 500; }
+
+    .detail { font-size: 13px; color: var(--muted); line-height: 1.65; }
+    .detail strong { color: var(--text); font-weight: 500; display: block; margin-bottom: 3px; font-size: 12px; }
+
+    .summary {
+      font-size: 12.5px; color: var(--muted); background: rgba(255,255,255,.03);
+      border-left: 2px solid rgba(110,231,183,.4); padding: 9px 12px; border-radius: 0 8px 8px 0;
+    }
+
+    .card-foot {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      border-top: 1px solid var(--line); padding-top: 12px; margin-top: auto;
+    }
+    .card-foot select { padding: 7px 10px; font-size: 12.5px; border-radius: 8px; width: auto; flex: 1; }
+    .time { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--muted); white-space: nowrap; }
+
+    .empty { text-align: center; padding: 60px 20px; color: var(--muted); }
+    .empty .display { font-size: 17px; color: var(--text); margin-bottom: 6px; }
+
+    .skeleton { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; height: 220px; animation: pulse 1.4s infinite; }
+    @keyframes pulse { 0%,100% { opacity: .5; } 50% { opacity: .85; } }
+
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: var(--surface); border: 1px solid rgba(110,231,183,.4); color: var(--text);
+      padding: 11px 18px; border-radius: 999px; font-size: 13px;
+      opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; z-index: 50;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    @media (max-width: 560px) {
+      .wrap { padding: 16px; }
+      .topbar { padding: 14px 16px; }
+      .cards { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ---------- LOGIN ---------- -->
+  <div id="login">
+    <div class="login-card">
+      <div class="login-tag">// akses terbatas</div>
+      <h1 class="display">Dashboard Lead</h1>
+      <p>Masukkan password admin untuk melihat prospek yang masuk dari AI agent.</p>
+      <input type="password" id="pass" placeholder="Password admin" autocomplete="current-password" />
+      <button class="btn btn-block" id="loginBtn">Masuk</button>
+      <div class="error" id="loginError"></div>
+    </div>
+  </div>
+
+  <!-- ---------- DASHBOARD ---------- -->
+  <div id="dash">
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="17" height="17">
+            <path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/>
+          </svg>
+        </div>
+        <div>
+          <h1>Dashboard Lead</h1>
+          <div class="sub">RND SOLUTION</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost" id="refreshBtn">Muat ulang</button>
+        <button class="btn btn-ghost" id="logoutBtn">Keluar</button>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <div class="stats" id="stats"></div>
+
+      <div class="toolbar">
+        <input type="text" id="search" placeholder="Cari nama, kontak, atau kebutuhan..." />
+        <select id="filterStatus">
+          <option value="">Semua status</option>
+          <option value="baru">Baru</option>
+          <option value="diproses">Diproses</option>
+          <option value="deal">Deal</option>
+          <option value="batal">Batal</option>
+        </select>
+      </div>
+
+      <div class="cards" id="cards"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const API_BASE = 'https://rndsolution-agent.onrender.com';
+    const STATUSES = ['baru', 'diproses', 'deal', 'batal'];
+    const LABELS = { baru: 'Baru', diproses: 'Diproses', deal: 'Deal', batal: 'Batal' };
+    const JENIS = {
+      website: 'Website / Landing Page',
+      landing_page: 'Landing Page',
+      cashier_app: 'Aplikasi Kasir',
+      bookkeeping_app: 'Aplikasi Pembukuan',
+      android_app: 'Aplikasi Android',
+      custom_system: 'Sistem Custom',
+      saas: 'SaaS Multi-tenant',
+      dashboard: 'Dashboard Internal',
+      deployment: 'Deploy & Domain',
+      lainnya: 'Lainnya',
+    };
+
+    let password = sessionStorage.getItem('rnd_admin_pass') || '';
+    let leads = [];
+
+    const $ = (id) => document.getElementById(id);
+    const esc = (s) => String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+    function toast(msg) {
+      const t = $('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2200);
+    }
+
+    async function api(path, options = {}) {
+      const res = await fetch(API_BASE + path, {
+        ...options,
+        headers: { 'Content-Type': 'application/json', 'x-admin-password': password, ...(options.headers || {}) },
+      });
+      if (res.status === 401) throw new Error('unauthorized');
+      if (!res.ok) throw new Error('Gagal memuat data.');
+      return res.json();
+    }
+
+    // ---------- Login ----------
+    async function doLogin() {
+      const val = $('pass').value.trim();
+      if (!val) return;
+      password = val;
+      $('loginBtn').disabled = true;
+      $('loginBtn').textContent = 'Memeriksa...';
+      $('loginError').style.display = 'none';
+      try {
+        const data = await api('/api/leads');
+        sessionStorage.setItem('rnd_admin_pass', password);
+        leads = data.leads || [];
+        showDash();
+        render();
+      } catch (err) {
+        password = '';
+        $('loginError').textContent = err.message === 'unauthorized'
+          ? 'Password salah. Coba lagi.'
+          : 'Tidak bisa terhubung ke server. Backend mungkin sedang bangun dari mode idle — tunggu 30 detik lalu coba lagi.';
+        $('loginError').style.display = 'block';
+      } finally {
+        $('loginBtn').disabled = false;
+        $('loginBtn').textContent = 'Masuk';
+      }
+    }
+
+    function showDash() {
+      $('login').style.display = 'none';
+      $('dash').style.display = 'block';
+    }
+
+    function logout() {
+      sessionStorage.removeItem('rnd_admin_pass');
+      password = '';
+      leads = [];
+      $('dash').style.display = 'none';
+      $('login').style.display = 'flex';
+      $('pass').value = '';
+    }
+
+    async function loadLeads(silent) {
+      if (!silent) $('cards').innerHTML = '<div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>';
+      try {
+        const data = await api('/api/leads');
+        leads = data.leads || [];
+        render();
+      } catch (err) {
+        if (err.message === 'unauthorized') return logout();
+        $('cards').innerHTML = '<div class="empty"><div class="display">Gagal memuat data</div><div>Coba muat ulang sebentar lagi.</div></div>';
+      }
+    }
+
+    // ---------- Render ----------
+    function fmtDate(iso) {
+      const d = new Date(iso);
+      return d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) +
+             ' · ' + d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function contactLink(kontak) {
+      if (!kontak) return '<span style="color:var(--muted)">Kontak belum diisi</span>';
+      const clean = kontak.replace(/[^0-9+@a-zA-Z._-]/g, '');
+      if (kontak.includes('@')) return `<a href="mailto:${esc(clean)}">${esc(kontak)}</a>`;
+      const wa = clean.replace(/\D/g, '').replace(/^0/, '62');
+      return `<a href="https://wa.me/${wa}" target="_blank" rel="noopener">${esc(kontak)}</a>`;
+    }
+
+    function renderStats() {
+      const total = leads.length;
+      const count = (s) => leads.filter((l) => l.status === s).length;
+      $('stats').innerHTML = `
+        <div class="stat"><div class="label">Total Lead</div><div class="value">${total}</div></div>
+        <div class="stat is-accent"><div class="label">Baru</div><div class="value">${count('baru')}</div></div>
+        <div class="stat"><div class="label">Diproses</div><div class="value">${count('diproses')}</div></div>
+        <div class="stat"><div class="label">Deal</div><div class="value">${count('deal')}</div></div>`;
+    }
+
+    function render() {
+      renderStats();
+      const q = $('search').value.toLowerCase().trim();
+      const status = $('filterStatus').value;
+
+      const filtered = leads.filter((l) => {
+        if (status && l.status !== status) return false;
+        if (!q) return true;
+        return [l.nama, l.kontak, l.jenis_kebutuhan, l.detail_kebutuhan, l.estimasi_budget]
+          .some((f) => String(f || '').toLowerCase().includes(q));
+      });
+
+      if (!filtered.length) {
+        $('cards').innerHTML = `<div class="empty" style="grid-column:1/-1">
+          <div class="display">${leads.length ? 'Tidak ada yang cocok' : 'Belum ada lead masuk'}</div>
+          <div>${leads.length ? 'Coba ubah kata kunci atau filter status.' : 'Lead dari AI agent akan muncul di sini otomatis.'}</div>
+        </div>`;
+        return;
+      }
+
+      $('cards').innerHTML = filtered.map((l) => `
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <div class="card-name">${l.nama ? esc(l.nama) : '<span class="anon">Tanpa nama</span>'}</div>
+              <div class="card-contact">${contactLink(l.kontak)}</div>
+            </div>
+            <span class="badge ${esc(l.status)}">${LABELS[l.status] || esc(l.status)}</span>
+          </div>
+
+          <div class="meta">
+            <span class="chip">Kebutuhan: <b>${esc(JENIS[l.jenis_kebutuhan] || l.jenis_kebutuhan || '-')}</b></span>
+            ${l.estimasi_budget ? `<span class="chip">Budget: <b>${esc(l.estimasi_budget)}</b></span>` : ''}
+          </div>
+
+          ${l.detail_kebutuhan ? `<div class="detail"><strong>Detail kebutuhan</strong>${esc(l.detail_kebutuhan)}</div>` : ''}
+          ${l.ringkasan_chat ? `<div class="summary">${esc(l.ringkasan_chat)}</div>` : ''}
+
+          <div class="card-foot">
+            <select data-id="${l.id}" class="status-select">
+              ${STATUSES.map((s) => `<option value="${s}" ${s === l.status ? 'selected' : ''}>${LABELS[s]}</option>`).join('')}
+            </select>
+            <span class="time">${fmtDate(l.created_at)}</span>
+          </div>
+        </div>`).join('');
+
+      document.querySelectorAll('.status-select').forEach((sel) => {
+        sel.addEventListener('change', async (e) => {
+          const id = e.target.dataset.id;
+          const newStatus = e.target.value;
+          e.target.disabled = true;
+          try {
+            await api('/api/leads/' + id, { method: 'PATCH', body: JSON.stringify({ status: newStatus }) });
+            const lead = leads.find((l) => String(l.id) === String(id));
+            if (lead) lead.status = newStatus;
+            render();
+            toast('Status diperbarui.');
+          } catch (err) {
+            if (err.message === 'unauthorized') return logout();
+            toast('Gagal memperbarui status.');
+            e.target.disabled = false;
+          }
+        });
+      });
+    }
+
+    // ---------- Events ----------
+    $('loginBtn').addEventListener('click', doLogin);
+    $('pass').addEventListener('keydown', (e) => { if (e.key === 'Enter') doLogin(); });
+    $('refreshBtn').addEventListener('click', () => { loadLeads(); toast('Memuat ulang...'); });
+    $('logoutBtn').addEventListener('click', logout);
+    $('search').addEventListener('input', render);
+    $('filterStatus').addEventListener('change', render);
+
+    // auto-login kalau password masih tersimpan di sesi ini
+    if (password) {
+      showDash();
+      loadLeads();
+    }
+  </script>
+</body>
+</html>
