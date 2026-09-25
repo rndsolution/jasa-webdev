@@ -17,7 +17,7 @@ function formatRupiah(angka) {
 
 async function fetchJSON(path) {
   try {
-    const res = await fetch(`https://raw.githubusercontent.com/${REPO}/${BRANCH}/${path}?t=${Date.now()}`);
+	    const res = await fetch(`/api/${path}?t=${Date.now()}`);
     if (!res.ok) return null;
     return await res.json();
   } catch (e) {
@@ -99,8 +99,8 @@ async function init() {
   jenisContainer.innerHTML = skeletonJenis();
   fiturContainer.innerHTML = skeletonFitur();
 
-  const kalkulator = await fetchJSON('content/kalkulator.json');
-  const kontak = await fetchJSON('content/kontak.json');
+    const kalkulator = await fetchJSON('kalkulator');
+  const kontak = await fetchJSON('settings/kontak');
 
   if (kontak && kontak.whatsapp) waNumber = kontak.whatsapp;
 

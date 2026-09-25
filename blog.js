@@ -1,37 +1,10 @@
-const REPO = "dongengkids-wq/jasa-webdev";
-const BRANCH = "main";
-const API_URL = `https://api.github.com/repos/${REPO}/contents/content/artikel?ref=${BRANCH}`;
-
 let allArticles = [];
 let activeCategory = 'Semua';
 
-function parseFrontmatter(raw) {
-  const match = raw.match(/^---\s*([\s\S]*?)\s*---\s*([\s\S]*)$/);
-  if (!match) return { data: {}, body: raw };
-  const data = {};
-  match[1].split('\n').forEach(line => {
-    const idx = line.indexOf(':');
-    if (idx === -1) return;
-    const key = line.slice(0, idx).trim();
-    let value = line.slice(idx + 1).trim();
-    value = value.replace(/^['"]|['"]$/g, '');
-    data[key] = value;
-  });
-  return { data, body: match[2].trim() };
-}
-
 async function fetchArticles() {
-  const res = await fetch(API_URL);
+  const res = await fetch('/api/articles');
   if (!res.ok) return [];
-  const files = await res.json();
-  const articles = await Promise.all(
-    files.filter(f => f.name.endsWith('.md')).map(async (f) => {
-      const raw = await (await fetch(f.download_url)).text();
-      const { data } = parseFrontmatter(raw);
-      return { ...data, slug: f.name.replace('.md', '') };
-    })
-  );
-  return articles.sort((a, b) => new Date(b.date) - new Date(a.date));
+  return await res.json();
 }
 
 function skeletonCards(n) {
@@ -145,46 +118,45 @@ async function renderDetail() {
     </div>
   `;
 
-  const rawUrl = `https://raw.githubusercontent.com/${REPO}/${BRANCH}/content/artikel/${slug}.md`;
-  const res = await fetch(rawUrl);
+  const res = await fetch(`/api/articles/${slug}`);
   if (!res.ok) {
     container.innerHTML = '<p class="text-muted">Artikel tidak ditemukan.</p>';
     return;
   }
 
-  const raw = await res.text();
-  const { data, body } = parseFrontmatter(raw);
+  const data = await res.json();
+  const body = data.body || '';
 
   document.getElementById('pageTitle').textContent = `${data.title || 'Artikel'} — RND Solution`;
 
   const seoDesc = data.meta_description || data.excerpt || '';
-const descEl = document.getElementById('metaDescription');
-if (descEl) descEl.setAttribute('content', seoDesc);
+  const descEl = document.getElementById('metaDescription');
+  if (descEl) descEl.setAttribute('content', seoDesc);
 
   const pageUrl = `https://rndsolution.id/artikel.html?slug=${slug}`;
-const img = data.thumbnail || 'https://rndsolution.id/assets/og-image.jpg';
-const fullTitle = `${data.title || 'Artikel'} — RND Solution`;
+  const img = data.thumbnail || 'https://rndsolution.id/assets/og-image.jpg';
+  const fullTitle = `${data.title || 'Artikel'} — RND Solution`;
 
-const canonicalEl = document.getElementById('canonicalLink');
-if (canonicalEl) canonicalEl.setAttribute('href', pageUrl);
+  const canonicalEl = document.getElementById('canonicalLink');
+  if (canonicalEl) canonicalEl.setAttribute('href', pageUrl);
 
-const ogUrlEl = document.getElementById('ogUrl');
-if (ogUrlEl) ogUrlEl.setAttribute('content', pageUrl);
+  const ogUrlEl = document.getElementById('ogUrl');
+  if (ogUrlEl) ogUrlEl.setAttribute('content', pageUrl);
 
-const ogTitleEl = document.getElementById('ogTitle');
-if (ogTitleEl) ogTitleEl.setAttribute('content', fullTitle);
+  const ogTitleEl = document.getElementById('ogTitle');
+  if (ogTitleEl) ogTitleEl.setAttribute('content', fullTitle);
 
-const ogDescEl = document.getElementById('ogDescription');
-if (ogDescEl) ogDescEl.setAttribute('content', seoDesc);
+  const ogDescEl = document.getElementById('ogDescription');
+  if (ogDescEl) ogDescEl.setAttribute('content', seoDesc);
 
-const ogImageEl = document.getElementById('ogImage');
-if (ogImageEl) ogImageEl.setAttribute('content', img);
+  const ogImageEl = document.getElementById('ogImage');
+  if (ogImageEl) ogImageEl.setAttribute('content', img);
 
-const twitterTitleEl = document.getElementById('twitterTitle');
-if (twitterTitleEl) twitterTitleEl.setAttribute('content', fullTitle);
+  const twitterTitleEl = document.getElementById('twitterTitle');
+  if (twitterTitleEl) twitterTitleEl.setAttribute('content', fullTitle);
 
-const twitterDescEl = document.getElementById('twitterDescription');
-if (twitterDescEl) twitterDescEl.setAttribute('content', seoDesc);
+  const twitterDescEl = document.getElementById('twitterDescription');
+  if (twitterDescEl) twitterDescEl.setAttribute('content', seoDesc);
 
   container.innerHTML = `
     <div class="flex items-center gap-3 mb-3">
